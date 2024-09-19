@@ -1,14 +1,28 @@
 import { NextFunction, Request, Response } from "express";
-import { AppDataSource } from "../connections/ormConfig";
+import { db } from "../connections/ormConfig";
+import { Dominio } from "../entities/Dominio";
+import Boom from "@hapi/boom";
 
+export const sinTokenMdw = async (
+  req: Request,
+  res: Response,
+  next: NextFunction
+) => {
+  try {
+    const dominio = req.hostname;
+    const existeDominio = await db
+      .getRepository(Dominio)
+      .findOne({ where: { dominio } });
 
-export const sinTokenMdw = async (req: Request, res: Response, next: NextFunction) => {
-    try {
+    if (!existeDominio) throw Boom.notFound(`No existe el dominio: ${dominio}`);
 
-        global.conn = AppDataSource.manager
+    if (existeDominio.estado === "I")
+      throw Boom.badRequest(
+        `El dominio ${dominio} se encuentra inactivo, consulte con el administrador.`
+      );
 
-        next();
-    } catch (error) {
-        
-    }
-}
+    next();
+  } catch (error) {
+    next(error);
+  }
+};

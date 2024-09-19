@@ -6,7 +6,7 @@ import {
   getUsersApiJsonPlaceHolder,
 } from "./controller";
 import { UsersQueryParams } from "../../interfaces/user.interface";
-import { User } from "../../entities/User";
+import { Usuario } from "../../entities/Usuario";
 import { sinTokenMdw } from "../../middleware/sinTokenMdw";
 import { responseHelper } from "../../helpers/utilHelpers";
 import { validate } from "express-validation";
@@ -26,7 +26,7 @@ routes.get(
   "/database",
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const params = req.query as unknown as UsersQueryParams;
+      const params: UsersQueryParams = req.query ;
       const response = await getAllUsers(params.filtro, params.estado);
       res.json(response);
     } catch (error) {
@@ -41,9 +41,8 @@ routes.post(
   sinTokenMdw,
   async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const body: User = req.body;
-      const conn = global.conn;
-      const response = await createUser(res, conn , body);
+      const body: Usuario = req.body;
+      const response = await createUser(res , body);
       responseHelper.success(res, "Usuario creado con éxito", response);
     } catch (error) {
       console.log(error);

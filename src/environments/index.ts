@@ -5,6 +5,7 @@ config();
 
 export const PORT = process.env.PORT ?? 3000 // ? Operador Nulish Coalesing
 export const API_RESTCOUNTRY = process.env.API_RESTCOUNTRY!
+export const HOST = process.env.HOST
 export const TOKEN_TMDB = process.env.TOKEN_TMDB
 export const API_TMDB = process.env.API_TMDB
 export const API_DOLLAR = process.env.API_DOLLAR
@@ -23,5 +24,8 @@ export const application = {
     },
     get DB_SYNCHRONIZE(){
         return process.env.DB_SYNCHRONIZE === 'true'
+    },
+    get EDAD_LIMITE(){
+        return process.env.EDAD_LIMITE
     }
 }

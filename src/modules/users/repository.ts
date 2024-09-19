@@ -1,24 +1,24 @@
-import { EntityManager} from "typeorm";
-import { User } from "../../entities/User";
+import { SelectQueryBuilder } from "typeorm";
+import { Usuario } from "../../entities/Usuario";
+import { db } from "../../connections/ormConfig";
 
-export default class UserRespository {
-  async findAllUsers(cnx: EntityManager) {
-    return await cnx
-      .createQueryBuilder()
-      .select(["user.nombres", "user.apellidos"])
-      .from(User, "user")
+export const UserRepository = db.getRepository(Usuario).extend({
+  findByName(firstName: string, lastName: string) {
+    const query: SelectQueryBuilder<Usuario> = this.createQueryBuilder("user");
+    return query
+      .where("user.firstName = :firstName", { firstName })
+      .andWhere("user.lastName = :lastName", { lastName })
       .getMany();
-  }
-  async findUsersByState(cnx: EntityManager, estado: string) {
-    return await cnx
-      .createQueryBuilder()
-      .select(["user.nombres", "user.apellidos"])
-      .from(User, "user")
-      .where("user.estado = :estado", { estado })
-      .getMany();
-  }
-  async findUsers(cnx: EntityManager, filtro?: string, estado?: string) {
-    const query = cnx.createQueryBuilder().select(["user"]).from(User, "user");
+  },
+  findUsers(filtro: string, estado: string) {
+    const query: SelectQueryBuilder<Usuario> = this.createQueryBuilder("user");
+    query.select([
+      'user.identificacion as "identificacion"',
+      'user.nombres as "nombres"',
+      'user.apellidos as "apellidos"',
+      'user.email as "email"',
+      'user.fechaNacimiento as "fechaNacimiento"',
+    ]);
 
     if (filtro) {
       query.andWhere(
@@ -33,11 +33,6 @@ export default class UserRespository {
       });
     }
 
-    return await query.getRawMany();
-  }
-
-  async createUser(cnx: EntityManager, data: User) {
-    return await cnx.getRepository(User).save(data)
-  }
-}
-
+    return query.getRawMany<Usuario>();
+  },
+});
