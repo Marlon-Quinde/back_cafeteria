@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response, Router } from "express";
-import { responseHelper } from "../../helpers/utilHelpers";
+import { HttpResponseHelper } from "../../helpers/utilHelpers";
 import { CodigosHttpEnum } from "../../enums/codesHttpEnum";
 import { sinTokenMdw } from "../../middleware/sinTokenMdw";
 import { validate } from "express-validation";
@@ -29,7 +29,7 @@ routes.post(
   async (req: Request, res: Response, next: NextFunction) => {
     try {
     } catch (error) {
-      responseHelper.errors(res, CodigosHttpEnum.internalServerError);
+      HttpResponseHelper.responseDirect(res, CodigosHttpEnum.internalServerError);
     }
   }
 );
